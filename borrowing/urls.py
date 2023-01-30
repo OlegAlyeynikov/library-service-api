@@ -8,12 +8,18 @@ app_name = "borrowing"
 
 router = routers.DefaultRouter()
 router.register("borrowings", BorrowingViewSet)
-# router.register("buses", BusViewSet)
-# router.register("trips", TripViewSet)
-# router.register("orders", OrderViewSet)
-# router.register("tickets", TicketViewSet)
 
-urlpatterns = [path("", include(router.urls))]
+urlpatterns = [
+    path("", include(router.urls)),
+    # path("borrowings/<int:pk>/return/", borrowing_return_book, name="return-book"),
+]
+
+# urlpatterns = format_suffix_patterns(
+#     [
+#         path("", include(router.urls)),
+#         path("borrowings/<int:pk>/return/", borrowing_return_book, name="return-book"),
+#     ]
+# )
 
 # 1. POST: borrowings/ - add new borrowing (when borrow book - inventory should be made -= 1)
 # 2. GET: borrowings/?user_id=...&is_active=...- get borrowings by user id

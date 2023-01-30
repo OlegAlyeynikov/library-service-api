@@ -13,4 +13,17 @@ class Book(models.Model):
         ordering = ["title"]
 
     def __str__(self):
-        return f"{self.title} {self.authors}"
+        return (
+            f"'{self.title}' by {self.authors}, "
+            f"cover: {self.cover}, "
+            f"daily fee: {self.daily_fee}, "
+            f"inventory: {self.inventory}"
+        )
+
+    def reduce_inventory_book(self):
+        self.inventory -= 1
+        self.save()
+
+    def increase_inventory_book(self):
+        self.inventory += 1
+        self.save()
