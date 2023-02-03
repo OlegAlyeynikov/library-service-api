@@ -56,7 +56,6 @@ class Borrowing(models.Model):
             return super(Borrowing, self).save(
                 force_insert, force_update, using, update_fields
             )
-        self.book.increase_inventory_book()
         return super(Borrowing, self).save(
             force_insert, force_update, using, update_fields
         )

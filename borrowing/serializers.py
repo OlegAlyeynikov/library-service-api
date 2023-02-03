@@ -2,7 +2,7 @@ import datetime
 
 from rest_framework import serializers
 
-
+from borrowing.bot import send_message_create_borrowing
 from borrowing.models import Borrowing
 
 
@@ -21,6 +21,12 @@ class BorrowingSerializer(serializers.ModelSerializer):
                 serializers.ValidationError,
             )
         return data
+
+    def create(self, validated_data):
+        send_message_create_borrowing(validated_data)
+        book = validated_data["book"]
+        book.reduce_inventory_book()
+        return Borrowing(**validated_data)
 
     def update(self, instance, validated_data):
         if instance.borrow_date:
