@@ -14,28 +14,29 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.template.defaulttags import url
 from django.urls import path, include
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
+from rest_framework import routers
+from book.urls import router as book_router
+from borrowing.urls import router as borrow_router
+from payment.urls import router as payment_router
+
+# from user.urls import router as user_router
+
+router = routers.DefaultRouter()
+router.registry.extend(book_router.registry)
+router.registry.extend(borrow_router.registry)
+router.registry.extend(payment_router.registry)
+# router.registry.extend(user_router.registry)
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("api/book/", include("book.urls", namespace="book")),
-    path("api/borrowing/", include("borrowing.urls", namespace="borrowing")),
-    path("api/user/", include("user.urls", namespace="user")),
-    path("api/payment/", include("payment.urls", namespace="payment")),
+    path("", include(router.urls)),
+    path("user/", include("user.urls", namespace="user")),
     path("api/doc/", SpectacularAPIView.as_view(), name="schema"),
-    # Optional UI:
     path(
         "api/doc/swagger/",
         SpectacularSwaggerView.as_view(url_name="schema"),
         name="swagger-ui",
     ),
-    # path("api/doc/", SpectacularAPIView.as_view(), name="schema"),
-    # # Optional UI:
-    # path(
-    #     "api/doc/swagger/",
-    #     SpectacularSwaggerView.as_view(url_name="schema"),
-    #     name="swagger-ui",
-    # ),
 ]

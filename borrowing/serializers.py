@@ -1,12 +1,16 @@
-import datetime
-
+from django.db import transaction
 from rest_framework import serializers
-
-from borrowing.bot import send_message_create_borrowing
+from book.serializers import BookSerializer
+from borrowing.bot import TelegramBot
 from borrowing.models import Borrowing
+from payment.models import Payment
+from payment.payment import create_payment_session
+from payment.serializers import PaymentSerializer
 
 
 class BorrowingSerializer(serializers.ModelSerializer):
+    user = serializers.SlugRelatedField(many=False, read_only=True, slug_field="email")
+
     def validate(self, attrs):
         data = super(BorrowingSerializer, self).validate(attrs)
         Borrowing.validate_correct_date(
@@ -22,11 +26,31 @@ class BorrowingSerializer(serializers.ModelSerializer):
             )
         return data
 
+    @transaction.atomic
     def create(self, validated_data):
-        send_message_create_borrowing(validated_data)
         book = validated_data["book"]
-        book.reduce_inventory_book()
-        return Borrowing(**validated_data)
+        user = validated_data["user"]
+
+        if book.inventory == 0:
+            raise serializers.ValidationError("No requested book in the library!")
+        else:
+            borrow = super().create(validated_data)
+            request = self.context["request"]
+            create_payment_session(borrow, "PENDING", request, "PAID")
+            payment = Payment.objects.get(borrowing=borrow)
+            message = (
+                f"{user.first_name} {user.last_name} "
+                f"You created new borrowing in the library: "
+                f"borrow date {validated_data['borrow_date']}, "
+                f"expected return date {validated_data['expected_return_date']}, "
+                f"book {validated_data['book']}, "
+                f"your link for pay: {payment.session_url}"
+            )
+            bot = TelegramBot()
+            bot.send_message_(message)
+            book.inventory -= 1
+            book.save()
+            return borrow
 
     def update(self, instance, validated_data):
         if instance.borrow_date:
@@ -35,7 +59,6 @@ class BorrowingSerializer(serializers.ModelSerializer):
                     "error": "You can't change borrowing",
                 }
             )
-
         return super().update(instance, validated_data)
 
     class Meta:
@@ -46,54 +69,18 @@ class BorrowingSerializer(serializers.ModelSerializer):
             "expected_return_date",
             "actual_return_date",
             "book",
+            "user",
+            "payments",
         )
-        read_only_fields = ["actual_return_date"]
+        read_only_fields = ["user", "actual_return_date", "payments"]
+
+
+class BorrowDetailSerializer(BorrowingSerializer):
+    book = BookSerializer(many=False, read_only=True)
+    payments = PaymentSerializer(many=True, read_only=True)
 
 
 class BorrowingReturnSerializer(serializers.ModelSerializer):
-    def update(self, instance, validated_data):
-        if instance.actual_return_date:
-            raise serializers.ValidationError(
-                {
-                    "error": "You can't return a book twice",
-                }
-            )
-
-        return super().update(instance, validated_data)
-
-    # def validate_actual_return_date(self):
-    # if not self.instance and not value:      ## Creation and value not provided
-    #     raise serializers.ValidationError('The username is required on user profile creation.')
-    # if value and self.instance != value:  ## Update and value differs from existing
-    # if self.instance:
-    #     raise serializers.ValidationError(
-    #         {"error": "You can't return a book twice"}
-    #     )
-    # raise serializers.ValidationError('The username cannot be modified.')
-
-    # def validate(self, attrs):
-    #     data = super(BorrowingReturnSerializer, self).validate(attrs)
-    #     if self.instance:
-    #         print(self.instance)
-    #         print(attrs["actual_return_date"])
-    #         print(data)
-    #         print(attrs)
-    #
-    #         raise serializers.ValidationError(
-    #             {"error": "You can't return a book twice"}
-    #         )
-    #
-    #     if attrs["actual_return_date"]:
-    #
-    #         return data
-
     class Meta:
         model = Borrowing
         fields = ("id", "actual_return_date")
-
-    # def create(self, validated_data):
-    #     # book_data = validated_data.pop("book")
-    #     borrowing = Borrowing.objects.create(**validated_data)
-    #     # for book_data in books_data:
-    #     borrowing.book.reduce_inventory_book()
-    #     return borrowing

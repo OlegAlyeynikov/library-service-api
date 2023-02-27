@@ -52,7 +52,6 @@ class Borrowing(models.Model):
     ):
         if not self.actual_return_date:
             self.full_clean()
-            self.book.reduce_inventory_book()
             return super(Borrowing, self).save(
                 force_insert, force_update, using, update_fields
             )

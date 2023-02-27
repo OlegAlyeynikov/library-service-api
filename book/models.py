@@ -19,11 +19,3 @@ class Book(models.Model):
             f"daily fee: {self.daily_fee}, "
             f"inventory: {self.inventory}"
         )
-
-    def reduce_inventory_book(self):
-        self.inventory -= 1
-        self.save()
-
-    def increase_inventory_book(self):
-        self.inventory += 1
-        self.save()
