@@ -27,5 +27,3 @@ Django project for a management system for book borrowing
 * redis-server
 * celery -A library_service_api worker -l INFO
 * celery -A library_service_api beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
-
-
