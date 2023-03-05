@@ -6,7 +6,6 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from book.models import Book
-
 from borrowing.bot import TelegramBot
 from borrowing.models import Borrowing
 from borrowing.serializers import BorrowingSerializer, BorrowingReturnSerializer

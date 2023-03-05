@@ -1,10 +1,11 @@
-import stripe
+from datetime import date
 from decimal import Decimal
 
-from datetime import date
+import stripe
 from django.conf import settings
-from django.urls import reverse
 from django.http import HttpRequest
+from django.urls import reverse
+
 from borrowing.models import Borrowing
 from .models import Payment
 
