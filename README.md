@@ -21,7 +21,7 @@ Django project for a management system for book borrowing
 > * source venv/bin/activate
 
 >For Windows:
-> * pip install virtualenv venv
+> * pip install virtual venv venv
 > * venv\Scripts\activate
 ####
 * Initialize environment variables .env as you can see in the .env.sample file
