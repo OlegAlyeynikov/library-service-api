@@ -12,7 +12,7 @@ from payment.serializers import PaymentSerializer
 class BorrowingSerializer(serializers.ModelSerializer):
     user = serializers.SlugRelatedField(many=False, read_only=True, slug_field="email")
 
-    def validate(self, attrs):
+    def validate(self, attrs) -> None:
         data = super(BorrowingSerializer, self).validate(attrs)
         Borrowing.validate_correct_date(
             attrs["borrow_date"],
@@ -28,7 +28,7 @@ class BorrowingSerializer(serializers.ModelSerializer):
         return data
 
     @transaction.atomic
-    def create(self, validated_data):
+    def create(self, validated_data: dict) -> Borrowing:
         book = validated_data["book"]
         user = validated_data["user"]
 
@@ -53,7 +53,7 @@ class BorrowingSerializer(serializers.ModelSerializer):
             book.save()
             return borrow
 
-    def update(self, instance, validated_data):
+    def update(self, instance: Borrowing, validated_data: dict) -> Borrowing:
         if instance.borrow_date:
             raise serializers.ValidationError(
                 {

@@ -40,7 +40,7 @@ class BorrowingViewSet(viewsets.ModelViewSet):
 
     @transaction.atomic
     @action(methods=["POST"], detail=True, url_path="return")
-    def return_book(self, request, pk: int):
+    def return_book(self, request, pk: int) -> Response:
         """Endpoint for book borrowing return"""
         borrowing = self.get_object()
         if borrowing.actual_return_date is None:

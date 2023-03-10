@@ -18,7 +18,7 @@ class Borrowing(models.Model):
     )
 
     @staticmethod
-    def validate_book_inventory(inventory: int, title: str, error_to_raise):
+    def validate_book_inventory(inventory: int, title: str, error_to_raise) -> None:
         if not (inventory > 0):
             raise error_to_raise(
                 {
@@ -27,7 +27,9 @@ class Borrowing(models.Model):
             )
 
     @staticmethod
-    def validate_correct_date(borrow_date, expected_date, error_to_raise):
+    def validate_correct_date(
+        borrow_date: datetime.date, expected_date: datetime.date, error_to_raise
+    ) -> None:
         if borrow_date < datetime.date.today():
             raise error_to_raise(
                 {

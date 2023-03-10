@@ -16,17 +16,16 @@ BOT_TOKEN = os.environ["BOT_TOKEN"]
 CHAT_ID = os.environ["CHAT_ID"]
 
 
-def get_books_with_overdue_borrow():
-    overdue_borrowing = (
+def get_books_with_overdue_borrow() -> str or list:
+    overdue_borrowing = list(
         Borrowing.objects.filter(expected_return_date__lt=datetime.date.today())
         .filter(actual_return_date=None)
         .values()
     )
-    overdue_borrowing_list = list(overdue_borrowing)
     borrow_list = []
     no_borrowing_message = "No borrowings overdue today!"
     if overdue_borrowing:
-        for borrow in overdue_borrowing_list:
+        for borrow in overdue_borrowing:
             book = Book.objects.get(id=borrow["book_id"])
             user = User.objects.get(id=borrow["user_id"])
             message = (
@@ -40,4 +39,4 @@ def get_books_with_overdue_borrow():
             )
             borrow_list.append(message)
         return borrow_list
-    return borrow_list.append(no_borrowing_message)
+    return no_borrowing_message

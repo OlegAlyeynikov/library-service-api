@@ -4,5 +4,6 @@ from .views import PaymentView
 
 app_name = "payment"
 
-router = routers.SimpleRouter()
+router = routers.DefaultRouter()
 router.register("payments", PaymentView, basename="payment")
+urlpatterns = router.urls

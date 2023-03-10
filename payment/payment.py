@@ -29,7 +29,7 @@ def create_payment_session(
     payment_type: Payment.type,
     request: HttpRequest,
     payment_status: Payment.status,
-):
+) -> None:
     stripe.api_key = settings.STRIPE_SECRET_KEY
     url = reverse("payment-success-url")
     success_url = (
