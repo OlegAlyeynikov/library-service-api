@@ -1,19 +1,7 @@
 import datetime
-import os
-
-import dotenv
-
 from book.models import Book
 from borrowing.models import Borrowing
-from library_service_api.settings import BASE_DIR
 from user.models import User
-
-dotenv_file = os.path.join(BASE_DIR, ".env")
-if os.path.isfile(dotenv_file):
-    dotenv.load_dotenv(dotenv_file)
-
-BOT_TOKEN = os.environ["BOT_TOKEN"]
-CHAT_ID = os.environ["CHAT_ID"]
 
 
 def get_books_with_overdue_borrow() -> str or list:

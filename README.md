@@ -26,7 +26,7 @@ Django project for a management system for book borrowing
 * python manage.py migrate
 * python manage.py runserver
 ####
-* To retrieve the notifications you must connect to https://t.me/borrowing_in_library_bot
+* To retrieve the notifications you must connect to https://t.me/borrowing_in_library
 * Or you can create your own telegram chatbot using https://t.me/BotFather and replace the bot token in settings.py
 ### Stripe payment system
 * You can use a payment system. For this, you need to initialize 
