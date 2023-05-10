@@ -9,7 +9,6 @@ from book.models import Book
 from borrowing.bot import TelegramBot
 from borrowing.models import Borrowing
 from borrowing.serializers import BorrowingSerializer, BorrowingReturnSerializer
-from payment.models import Payment
 from payment.payment import create_payment_session
 
 
@@ -52,8 +51,7 @@ class BorrowingViewSet(viewsets.ModelViewSet):
             delta = datetime.date.today() - borrowing.expected_return_date
 
             if delta.days > 0:
-                create_payment_session(borrowing, "FINE", request, "PENDING")
-                payment = Payment.objects.get(borrowing=borrowing)
+                payment = create_payment_session(borrowing, "FINE", request, "PENDING")
                 message = f"Your link for fine's pay: {payment.session_url}"
                 bot = TelegramBot()
                 bot.send_message_(message)
