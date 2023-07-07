@@ -15,7 +15,6 @@ def calculate_payment(
     actual_return_date: date,
     daily_fee: Decimal,
 ) -> Decimal:
-
     if actual_return_date:
         delta = actual_return_date - expected_return_date
         return Decimal(daily_fee * Decimal(delta.days) * settings.FINE_MULTIPLIER)
@@ -29,7 +28,7 @@ def create_payment_session(
     payment_type: Payment.type,
     request: HttpRequest,
     payment_status: Payment.status,
-) -> None:
+) -> Payment:
     stripe.api_key = settings.STRIPE_SECRET_KEY
     url = reverse("payment-success-url")
     success_url = (
@@ -61,7 +60,7 @@ def create_payment_session(
         cancel_url=cancel_url,
     )
 
-    Payment.objects.create(
+    payment_session = Payment.objects.create(
         status=payment_status,
         type=payment_type,
         borrowing=borrow,
@@ -69,3 +68,4 @@ def create_payment_session(
         session_id=session.id,
         money_to_pay=money_to_pay,
     )
+    return payment_session
