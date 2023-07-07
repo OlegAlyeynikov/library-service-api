@@ -1,11 +1,12 @@
 # Library Service
 
-Django project for a management system for book borrowing
-
-* Added and manage books
-* Added borrowing
-* Added payments for borrowing
-* Notifications for borrowing in telegram chat
+Django project for a book borrowing management system. 
+You no longer have to go anywhere to borrow a book from the library. 
+Just place an order on the site. And our courier will deliver it to you for free 
+if you are in the city. 
+Efficiently select books and make payments using the Stripe payment system, 
+receive telegram notifications with full information about the book, 
+a link to pay and reminders to remember to return it.
 
 ## Architecture library service
 
